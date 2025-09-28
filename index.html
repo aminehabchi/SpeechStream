@@ -146,6 +146,42 @@
       text-transform: uppercase;
     }
 
+    .developer-credit {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      z-index: 2001;
+    }
+
+    .developer-credit p {
+      color: #ffffff;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      text-align: center;
+      margin: 0;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .developer-credit a {
+      color: #ffffff;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      padding: 8px 12px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .developer-credit a:hover {
+      opacity: 1;
+      border-bottom: 1px solid #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
     .start-screen p {
       color: #ffffff;
       font-size: 1.3rem;
@@ -200,6 +236,8 @@
       transition: all 0.3s ease;
       letter-spacing: 1px;
       text-transform: uppercase;
+      position: relative;
+      z-index: 10;
     }
 
     #startBtn:hover {
@@ -258,6 +296,19 @@
         font-size: 0.8rem;
         padding: 10px 20px;
       }
+
+      .developer-credit {
+        bottom: 20px;
+        right: 20px;
+      }
+
+      .developer-credit p {
+        font-size: 0.8rem;
+      }
+
+      .developer-credit a {
+        padding: 6px 10px;
+      }
     }
   </style>
 </head>
@@ -272,6 +323,9 @@
       <textarea id="speechInput"
         placeholder="Type your speech here... Each sentence ending with a period (.) will become a separate slide."></textarea>
       <button id="startBtn">Start Presentation</button>
+    </div>
+    <div class="developer-credit">
+      <p><a href="https://github.com/aminehabchi/SpeechStream" target="_blank" rel="noopener noreferrer">GitHub</a></p>
     </div>
   </div>
 
@@ -288,7 +342,7 @@
 
   <!-- Instructions -->
   <div class="instructions">
-    ← → Navigate | Click = Next | Space = Pause
+    ← → Navigate | Click = Next | Space = Next | R = Restart
   </div>
 
   <!-- Original Content (will be populated dynamically) -->
@@ -381,8 +435,8 @@
 
     function updateProgress() {
       const progress = ((currentIndex + 1) / paragraphs.length) * 100;
-      progressBar.style.width = `${Math.max(0, progress)}%`;
-      counter.textContent = `${Math.max(0, currentIndex + 1)} / ${paragraphs.length}`;
+      progressBar.style.width = `${progress}%`;
+      counter.textContent = `${currentIndex + 1} / ${paragraphs.length}`;
     }
 
     function showParagraph(index) {
@@ -398,17 +452,18 @@
 
         // Smooth scroll to current paragraph in background
         paragraphs[index].scrollIntoView({ behavior: "smooth", block: "center" });
-      } else if (index >= paragraphs.length) {
-        updateActiveText("Presentation completed. Thank you for your attention.");
-        paragraphs.forEach(p => p.classList.remove("current"));
       }
 
       updateProgress();
     }
 
     function nextParagraph() {
-      if (currentIndex < paragraphs.length) {
+      if (currentIndex < paragraphs.length - 1) {
         currentIndex++;
+        showParagraph(currentIndex);
+      } else if (currentIndex === paragraphs.length - 1) {
+        // Loop back to the first paragraph
+        currentIndex = 0;
         showParagraph(currentIndex);
       }
     }
